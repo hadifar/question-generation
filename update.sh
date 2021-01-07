@@ -20,14 +20,13 @@ REMOTE_DIR=/groups/wall2-ilabt-iminds-be/cmsearch/users/amir/projects/$PROJECT_N
 #sudo rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data_answer_selection/  $SERVER:$REMOTE_DIR/data_answer_selection/
 
 #script.sh
-sudo rsync --include './' --include '*.py' --exclude '*' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
-sudo rsync --include './' --include '*.txt' --exclude '*' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
-sudo rsync --include './' --include '*.sh' --exclude '*' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
-sudo rsync --include './' --include '*.json' --exclude '*' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+sudo rsync --include './' --include '*.py' --exclude '*' --exclude './qgenv' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+sudo rsync --include './' --include '*.txt' --exclude '*' --exclude './qgenv' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+sudo rsync --include './' --include '*.sh' --exclude '*' --exclude './qgenv' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+sudo rsync --include './' --include '*.json' --exclude '*' --exclude './qgenv' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
 
 #sudo rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/dataset_cache_XLMTokenizer  $SERVER:$REMOTE_DIR/dataset_cache_XLMTokenizer
 
 ssh hadifar@n086-03.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/script.sh
-ssh hadifar@n086-03.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/run.sh
 ssh hadifar@n086-03.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/
 #done

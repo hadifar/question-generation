@@ -1,7 +1,7 @@
 
 
 /runs
-/data
+/data/cc_qg/org_train_qa_pairs.txt
 /qgenv
 .idea/
 
