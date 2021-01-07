@@ -1,2 +1,9 @@
+
+
+/runs
+/data
+/qgenv
+.idea/
+
 *.pt
 __pycache__
