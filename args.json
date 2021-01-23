@@ -8,7 +8,7 @@
   "per_device_eval_batch_size": 32,
   "gradient_accumulation_steps": 8,
   "learning_rate": 1e-4,
-  "num_train_epochs": 1,
+  "num_train_epochs": 10,
   "seed": 42,
   "do_train": true,
   "do_eval": true,
@@ -16,5 +16,5 @@
   "logging_steps": 100,
 
   "output_dir": "runs/t5-small-qg-hl-plus-rules",
-  "on_local_machine": true
+  "on_local_machine": false
 }
