@@ -1,10 +1,10 @@
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import torch
 
 
 def trim_batch(
-    input_ids, pad_token_id, attention_mask=None,
+        input_ids, pad_token_id, attention_mask=None,
 ):
     """Remove columns that are populated exclusively by pad_token_id"""
     keep_column_mask = input_ids.ne(pad_token_id).any(dim=0)
@@ -33,14 +33,15 @@ class T2TDataCollator():
         input_ids = torch.stack([example['source_ids'] for example in batch])
         target_ids = torch.stack([example['target_ids'] for example in batch])
         attention_mask = torch.stack([example['attention_mask'] for example in batch])
+        # sim_scores = torch.stack([example['similarity_score'] for example in batch])
 
         pad_token_id = self.tokenizer.pad_token_id
-        
+
         # don't trim on tpu, for some reason trimming leads to slower training on TPU
         if not self.using_tpu:
             input_ids, attention_mask = trim_batch(input_ids, pad_token_id, attention_mask=attention_mask)
             target_ids = trim_batch(target_ids, pad_token_id)
-        
+
         if self.model_type == "t5":
             lm_labels = target_ids.clone()
             decoder_input_ids = self._shift_right_t5(lm_labels)
@@ -52,21 +53,22 @@ class T2TDataCollator():
             if self.mode == 'training':
                 lm_labels[target_ids[:, 1:] == pad_token_id] = -100
 
-        params =  {
-            "input_ids": input_ids, 
+        params = {
+            "input_ids": input_ids,
             "attention_mask": attention_mask,
             "labels": lm_labels,
-            "decoder_input_ids": decoder_input_ids
+            "decoder_input_ids": decoder_input_ids,
+            # "similarity_score": sim_scores,
         }
-        
+
         return params
-    
+
     def _shift_right_t5(self, input_ids):
         decoder_start_token_id = self.tokenizer.pad_token_id
         pad_token_id = self.tokenizer.pad_token_id
 
         assert (
-            decoder_start_token_id is not None
+                decoder_start_token_id is not None
         ), "self.model.config.decoder_start_token_id has to be defined. In T5 it is usually set to the pad_token_id. See T5 docs for more information"
 
         # shift inputs to the right

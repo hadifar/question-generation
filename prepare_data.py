@@ -16,7 +16,7 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
     task: str = field(
-        default='e2e_qg',
+        default='qg',
         metadata={
             "help": "Which task 'qa', 'qg', 'e2e_qg', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
     )
@@ -24,7 +24,7 @@ class DataTrainingArguments:
     model_type: str = field(default='t5', metadata={"help": "One of 't5', 'bart'"})
 
     dataset_path: Optional[str] = field(
-        default="data/cc_qa",
+        default="data/cc_qg",
         metadata={"help": "Path for dataset directory"},
     )
     train_file_name: Optional[str] = field(
@@ -108,6 +108,7 @@ class DataProcessor:
             'source_ids': source_encoding['input_ids'],
             'target_ids': target_encoding['input_ids'],
             'attention_mask': source_encoding['attention_mask'],
+            # 'similarity_score': example_batch['similarity_score'],
         }
 
         return encodings
@@ -153,22 +154,25 @@ def main():
         level=logging.INFO
     )
 
+    cache_dir = os.path.join(data_args.dataset_path, 'cache/')
+
     if data_args.model_type == 't5':
-        tokenizer = T5Tokenizer.from_pretrained("t5-base")
+        tokenizer = T5Tokenizer.from_pretrained("t5-base", cache_dir=cache_dir)
     else:
-        tokenizer = T5Tokenizer.from_pretrained("bart-base")
+        tokenizer = T5Tokenizer.from_pretrained("bart-base", cache_dir=cache_dir)
 
     tokenizer.add_tokens(['<sep>', '<hl>'])
 
-    # train_dir = os.path.join(data_args.dataset_path, 'train_qa_pairs.txt')
     # valid_dir = os.path.join(data_args.dataset_path, 'valid_qa_pairs.txt')
 
     train_dataset = nlp.load_dataset(data_args.dataset_path,
                                      name=data_args.qg_format,
-                                     split='train')
+                                     split='train',
+                                     cache_dir=cache_dir)
     valid_dataset = nlp.load_dataset(data_args.dataset_path,
                                      name=data_args.qg_format,
-                                     split='validation')
+                                     split='validation',
+                                     cache_dir=cache_dir)
 
     processor = DataProcessor(
         tokenizer,
@@ -187,6 +191,7 @@ def main():
     train_dataset = processor.process(train_dataset)
     valid_dataset = processor.process(valid_dataset)
 
+    # columns = ["source_ids", "target_ids", "attention_mask", "similarity_score"]
     columns = ["source_ids", "target_ids", "attention_mask"]
     train_dataset.set_format(type='torch', columns=columns)
     valid_dataset.set_format(type='torch', columns=columns)

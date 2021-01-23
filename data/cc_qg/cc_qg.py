@@ -56,7 +56,12 @@ class QGConfig(nlp.BuilderConfig):
 
 
 class QG(nlp.GeneratorBasedBuilder):
-    _URL = "data/cc_qa"
+    _URL = "data/cc_qg"
+    # _URL1 = "https://cloud.ilabt.imec.be/index.php/s/DFQALHziH4RkXpY/download"
+    # _URL2 = "https://cloud.ilabt.imec.be/index.php/s/AZEidxEe37t5iAW/download"
+
+    _URL1 = "https://cloud.ilabt.imec.be/index.php/s/gWxFaAbWQyeobrX/download"
+    _URL2 = "https://cloud.ilabt.imec.be/index.php/s/zgMbtxtN6nxBPFf/download"
     _DEV_FILE = "valid_qa_pairs.txt"
     _TRAINING_FILE = "train_qa_pairs.txt"
 
@@ -78,6 +83,7 @@ class QG(nlp.GeneratorBasedBuilder):
                     "source_text": nlp.Value("string"),
                     "target_text": nlp.Value("string"),
                     "task": nlp.Value("string"),
+                    # "similarity_score": nlp.Value("float32"),
                 }
             ),
             # No default supervised_keys (as we have to pass both question
@@ -88,10 +94,10 @@ class QG(nlp.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         urls_to_download = {
-            "train": os.path.join(self._URL, self._TRAINING_FILE),
-            "dev": os.path.join(self._URL, self._DEV_FILE),
+            "train": os.path.join(self._URL1),
+            "dev": os.path.join(self._URL2),
         }
-        downloaded_files = dl_manager.extract(urls_to_download)
+        downloaded_files = dl_manager.download_and_extract(urls_to_download)
 
         return [
             nlp.SplitGenerator(name=nlp.Split.TRAIN, gen_kwargs={"filepath": downloaded_files["train"]}),
@@ -184,13 +190,54 @@ class QG(nlp.GeneratorBasedBuilder):
     #         examples.append({'source_text': input_text, "target_text": target_text, "task": "ans_ext"})
     #
     #     return examples
+    def _get_correct_alignement(self, context, answer):
+        """ Some original examples in SQuAD have indices wrong by 1 or 2 character. We test and fix this here. """
+
+        gold_text = answer
+        start_idx = context.find(answer)
+        # print(context)
+        # print(answer)
+        # print(start_idx)
+        end_idx = start_idx + len(gold_text)
+        if context[start_idx:end_idx] == gold_text:
+            return start_idx, end_idx  # When the gold label position is good
+        # elif context[start_idx - 1:end_idx - 1] == gold_text:
+        #     return start_idx - 1, end_idx - 1  # When the gold label is off by one character
+        # elif context[start_idx - 2:end_idx - 2] == gold_text:
+        #     return start_idx - 2, end_idx - 2  # When the gold label is off by two character
+        else:
+            raise ValueError()
 
     def process_my_e2e_qg(self, instance):
         source_text = f"generate questions: {instance['context'].strip()}"
         # questions = [instance['question']]
         # target_text = " {sep_token} ".join(questions)
         target_text = f"{instance['question']} {{sep_token}}"
-        return {"source_text": source_text, "target_text": target_text, "task": "e2e_qg"}
+        return {"source_text": source_text,
+                "target_text": target_text,
+                "task": "e2e_qg",
+                # "similarity_score": random.uniform(0, 1)
+                }
+
+    def process_my_qg(self, instance):
+        answer_text = instance['rule_question'][0]['A'].strip()
+        context = instance['context'].strip()
+        # sim_score = instance['rule_question'][0]['score']
+
+        if self.config.qg_format == "prepend":
+            que_gen_input = f"answer: {answer_text}  context: {context}"
+        elif self.config.qg_format == "highlight":
+            start_pos, end_pos = self._get_correct_alignement(context, answer_text)
+            que_gen_input = f"generate question: {context[:start_pos]} {{hl_token}} {answer_text} {{hl_token}} {context[end_pos:]}"
+        else:
+            raise ValueError()
+
+        que_gen_target = f"{instance['question']}"
+        return {"source_text": que_gen_input,
+                "target_text": que_gen_target,
+                "task": "qg",
+                # 'similarity_score': sim_score
+                }
 
     def _generate_examples(self, filepath):
         """This function returns the examples in the raw (text) form."""
@@ -199,41 +246,12 @@ class QG(nlp.GeneratorBasedBuilder):
         tasks = ['qa', 'qg', 'ans_ext', 'e2e_qg']
         with open(filepath) as f:
             for line in f:
-                question, context = json.loads(line)
-                instance = {'question': question, 'context': context}
-
-                if 'e2e_qg' in tasks:
-                    yield count, self.process_my_e2e_qg(instance)
+                instance = json.loads(line)
+                # if 'e2e_qg' in tasks:
+                #     yield count, self.process_my_e2e_qg(instance)
+                #     count += 1
+                if 'qg' in tasks:
+                    yield count, self.process_my_qg(instance)
                     count += 1
                 else:
                     raise NotImplementedError('The the process example is not implemented ...')
-
-            # squad = json.load(f)
-            # for article in squad["data"]:
-            #     title = article.get("title", "").strip()
-            #     for paragraph in article["paragraphs"]:
-            #         context = paragraph["context"].strip()
-            #
-            #         if 'ans_ext' in tasks:
-            #             ans_ext_examples = self.process_ans_ext(paragraph)
-            #             for example in ans_ext_examples:
-            #                     yield count, example
-            #                     count += 1
-            #
-            #         if 'e2e_qg' in tasks:
-            #             yield count, self.process_e2e_qg(paragraph)
-            #             count += 1
-            #
-            #         for qa in paragraph["qas"]:
-            #             question = qa["question"].strip()
-            #             id_ = qa["id"]
-            #
-            #             answers = [answer["text"].strip() for answer in qa["answers"]]
-            #             for task in tasks:
-            #                 if task == 'qa':
-            #                     yield count, self.process_qa_text(context, question, answers[0])
-            #                     count += 1
-            #
-            #                 if task == 'qg':
-            #                     yield count, self.process_qg_text(context, question, qa["answers"][0])
-            #                     count += 1

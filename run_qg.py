@@ -48,7 +48,7 @@ class ModelArguments:
         default=None, metadata={"help": "Where do you want to store the pretrained models downloaded from s3"}
     )
     label_smoothing: Optional[float] = field(
-        default=0,
+        default=0.0,
         metadata={"help": "label smoothing rate, set to > 0 if you want to enable lable smoothing"}
     )
     freeze_embeds: bool = field(
@@ -73,12 +73,12 @@ class DataTrainingArguments:
         metadata={"help": "Path for data files"},
     )
     task: Optional[str] = field(
-        default='e2e_qg',
+        default='qg',
         metadata={
             "help": "Which task 'qa', 'qg', 'e2e_qg', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
     )
     qg_format: Optional[str] = field(
-        default='prepend_qg_format',
+        default='highlight_qg_format',
         metadata={"help": "How to format inputs for que generation, 'highlight_qg_format' or 'prepend_qg_format'"},
     )
     max_source_length: Optional[int] = field(
@@ -93,8 +93,12 @@ class DataTrainingArguments:
 
 @dataclass
 class CTrainingArguments(TrainingArguments):
+    # similarity_factor: Optional[float] = field(
+    #     default=0.1,
+    #     metadata={"help": "similarity smoothing factor for rescaling loss"},
+    # )
     on_local_machine: Optional[bool] = field(
-        default=True,
+        default=False,
         metadata={"help": "training on local machine?"},
     )
 
