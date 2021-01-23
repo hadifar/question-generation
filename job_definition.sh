@@ -17,7 +17,7 @@ echo "
     \"clusterId\": 6,
     \"resources\": {
       \"gpus\": ${gpus},
-      \"systemMemory\": '64000',
+      \"systemMemory\":64000,
       \"cpuCores\": ${gpus},
       \"gpuModel\": \"V100\",
       \"minCudaVersion\": \"10\"
