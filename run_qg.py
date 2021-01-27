@@ -73,9 +73,9 @@ class DataTrainingArguments:
         metadata={"help": "Path for data files"},
     )
     task: Optional[str] = field(
-        default='qg',
+        default='e2e_qg_v2',
         metadata={
-            "help": "Which task 'qa', 'qg', 'e2e_qg', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
+            "help": "Which task 'qa', 'qg', 'e2e_qg', 'e2e_qg_v2', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
     )
     qg_format: Optional[str] = field(
         default='highlight_qg_format',
@@ -86,7 +86,7 @@ class DataTrainingArguments:
         metadata={"help": "Max input length for the source text"},
     )
     max_target_length: Optional[int] = field(
-        default=32,
+        default=128,
         metadata={"help": "Max input length for the target text"},
     )
 
@@ -97,8 +97,8 @@ class CTrainingArguments(TrainingArguments):
     #     default=0.1,
     #     metadata={"help": "similarity smoothing factor for rescaling loss"},
     # )
-    on_local_machine: Optional[bool] = field(
-        default=False,
+    is_debug_mode: Optional[bool] = field(
+        default=True,
         metadata={"help": "training on local machine?"},
     )
 

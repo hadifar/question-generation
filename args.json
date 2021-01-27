@@ -2,8 +2,8 @@
   "model_name_or_path": "t5-small",
   "model_type": "t5",
   "tokenizer_name_or_path": "t5_qg_tokenizer",
-  "train_file_path": "data/train_data_qg_highlight_qg_format_t5.pt",
-  "valid_file_path": "data/valid_data_qg_highlight_qg_format_t5.pt",
+  "train_file_path": "data/train_data_e2e_qg_v2_highlight_qg_format_t5.pt",
+  "valid_file_path": "data/valid_data_e2e_qg_v2_highlight_qg_format_t5.pt",
   "per_device_train_batch_size": 32,
   "per_device_eval_batch_size": 32,
   "gradient_accumulation_steps": 8,
@@ -15,6 +15,6 @@
   "evaluate_during_training": true,
   "logging_steps": 100,
 
-  "output_dir": "runs/t5-small-qg-hl-plus-rules",
-  "on_local_machine": false
+  "output_dir": "runs/t5-small-e2e-qg-v2-hl-plus-rules",
+  "is_debug_mode": false
 }

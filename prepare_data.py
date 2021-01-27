@@ -16,9 +16,9 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
     task: str = field(
-        default='qg',
+        default='e2e_qg_v2',
         metadata={
-            "help": "Which task 'qa', 'qg', 'e2e_qg', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
+            "help": "Which task 'qa', 'qg', 'e2e_qg', 'e2e_qg_v2', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
     )
 
     model_type: str = field(default='t5', metadata={"help": "One of 't5', 'bart'"})
@@ -36,7 +36,7 @@ class DataTrainingArguments:
         metadata={"help": "name for cached valid dataset"},
     )
     valid_for_qg_only: bool = field(
-        default=False,
+        default=True,
         metadata={"help": "For multitask dataset valid split should contain only qg task or all tasks."}
     )
     qg_format: Optional[str] = field(
@@ -48,7 +48,7 @@ class DataTrainingArguments:
         metadata={"help": "Max input length for the source text"},
     )
     max_target_length: Optional[int] = field(
-        default=32,
+        default=128,
         metadata={"help": "Max input length for the target text"},
     )
 
@@ -125,6 +125,9 @@ def filter_qg(example):
 def filter_e2e_qg(example):
     return example['task'] == 'e2e_qg'
 
+def filter_e2e_qg_v2(example):
+    return example['task'] == 'e2e_qg_v2'
+
 
 def filter_ans_ext(example):
     return example['task'] == 'ans_ext'
@@ -138,6 +141,7 @@ TASK_TO_FILTER_FN = {
     'qa': filter_qa,
     'qg': filter_qg,
     'e2e_qg': filter_e2e_qg,
+    'e2e_qg_v2':filter_e2e_qg_v2,
     'ans_ext': filter_ans_ext,
     'multi': filter_multi
 }

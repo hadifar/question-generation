@@ -10,17 +10,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'this-is-test'
 Bootstrap(app)
 
-TASK_NAME = "qg"
-nlp = pipeline(TASK_NAME)
+TASK_NAME = "e2e-qg-v2"
 
+nlp = pipeline('question-generation', 'runs/t5-small--hl-plus-rules', 't5_qg_tokenizer')
 
 class InputForm(FlaskForm):
     text = TextAreaField('Enter your text:', validators=[DataRequired()], render_kw={"rows": 8, "cols": 11})
     submit = SubmitField('Generate')
-
-
-def generate_question(text):
-    return nlp(text)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -30,7 +26,7 @@ def index():
 
     if form.validate_on_submit():
         text = form.text.data
-        questions = generate_question(text)
+        questions = nlp(text)
         # redirect the browser to another route and template
         if TASK_NAME == 'qg':
             return render_template('home.html', form=form, questions=questions)
