@@ -19,6 +19,8 @@ from pipelines import pipeline
 
 nlp = pipeline('e2e-qg-v2',model='t5-small-e2e-qg-v2-hl-plus-rules', tokenizer='t5_qg_tokenizer')
 
-text = "Easy! Jen Lancaster came to town! And a co-worker (and fellow WNBA member) is a huge fan and knew about the event and asked me if I wanted to go. And as I should have kept reading the two books I was in the middle of, I tried to ignore this book that promised to be funny and a fast read, which I was totally in the mood for. I could hear it calling to me. I got one of my other books and put it on top of the Lancaster, hoping that would silence it, and encourage me to pick up and finish the half-read one. But funny won the day. I read half Saturday, finished Sunday!"
-
-print(nlp(text))
+while True:
+    text = input("Enter your text:")
+    reply_dic = nlp(text)
+    print('Question:',reply_dic[0])
+    print('Answer:',reply_dic[1])
