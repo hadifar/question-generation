@@ -3,6 +3,7 @@ import os
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
+import json
 
 import torch
 from transformers import (
@@ -98,7 +99,7 @@ class CTrainingArguments(TrainingArguments):
     #     metadata={"help": "similarity smoothing factor for rescaling loss"},
     # )
     is_debug_mode: Optional[bool] = field(
-        default=True,
+        default=False,
         metadata={"help": "training on local machine?"},
     )
 
@@ -163,7 +164,7 @@ def main(args_file=None):
         cache_dir=model_args.cache_dir,
     )
 
-    if training_args.on_local_machine:
+    if training_args.is_debug_mode:
         config = AutoConfig.from_pretrained('t5-small')
         config.d_ff = 64
         config.d_kv = 2
@@ -253,12 +254,13 @@ def _mp_fn(index):
     main()
 
 
-# def run_qg():
-#     with open("args.json", 'w') as f:
-#         json.dump(args_dict, f)
-#
-#     main(args_file="args.json")
+def run_qg(args_dict):
+    print(args_dict)
+    with open("args.json", 'w') as f:
+        json.dump(args_dict, f)
+
+    main(args_file="args.json")
 
 
 if __name__ == "__main__":
-    main("args.json")
+    main()

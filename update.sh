@@ -18,7 +18,7 @@ REMOTE_DIR=/groups/wall2-ilabt-iminds-be/cmsearch/users/amir/projects/$PROJECT_N
 #sudo rsync --delete --archive --verbose --compress --update -e ssh $LOCAL/data_complaint/  $SERVER:$REMOTE_DIR/data_complaint/
 #sudo rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data_small_xlm15/  $SERVER:$REMOTE_DIR/data_small_xlm15/
 
-rsync --delete --archive --verbose --compress --exclude 'cache/' --exclude 'train_data_qg_highlight_qg_format_t5_full.pt' --exclude 'valid_data_qg_highlight_qg_format_t5_full.pt' --update -e ssh $LOCAL/data/  $SERVER:$REMOTE_DIR/data/
+#rsync --delete --archive --verbose --compress --exclude 'cache/' --exclude 'train_data_qg_highlight_qg_format_t5_full.pt' --exclude 'valid_data_qg_highlight_qg_format_t5_full.pt' --update -e ssh $LOCAL/data/  $SERVER:$REMOTE_DIR/data/
 
 #script.sh
 rsync --include './' --include '*.py' --exclude '*' --exclude 'venv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
