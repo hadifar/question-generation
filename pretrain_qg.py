@@ -9,19 +9,11 @@ from datasets import load_metric
 from nltk.tokenize import word_tokenize
 from transformers import (
     AutoModelForSeq2SeqLM,
-    T5Tokenizer,
-    BartTokenizer,
     HfArgumentParser,
-    set_seed, AutoConfig, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoTokenizer, )
-# from data_collator import T2TDataCollator
+    set_seed, AutoConfig, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, AutoTokenizer)
 from transformers.trainer_utils import get_last_checkpoint
 
 from data_helper import read_data
-
-MODEL_TYPE_TO_TOKENIZER = {
-    "t5": T5Tokenizer,
-    "bart": BartTokenizer,
-}
 
 logger = logging.getLogger(__name__)
 
@@ -68,9 +60,9 @@ class DataTrainingArguments:
         metadata={"help": "Path for data files"},
     )
     task: Optional[str] = field(
-        default='cloze2normal',
+        default='qg',
         metadata={
-            "help": "Which task 'qa', 'qg', 'e2e_qg', 'e2e_qg_v2', 'ans_ext', 'multi'. 'multi' means 'qa', 'qg', 'ans_ext' tasks"},
+            "help": "cloze2normal, normal2cloze, multi, qg"},
     )
     qg_format: Optional[str] = field(
         default='highlight_qg_format',
@@ -173,21 +165,8 @@ def main(args_file=None):
             f"Output directory ({training_args.output_dir}) already exists and is not empty. Use --overwrite_output_dir to overcome."
         )
 
-    # Setup logging
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
-        datefmt="%m/%d/%Y %H:%M:%S",
-        level=logging.INFO if training_args.local_rank in [-1, 0] else logging.WARN,
-    )
-    logger.warning(
-        "Process rank: %s, device: %s, n_gpu: %s, distributed training: %s, 16-bits training: %s",
-        training_args.local_rank,
-        training_args.device,
-        training_args.n_gpu,
-        bool(training_args.local_rank != -1),
-        training_args.fp16,
-    )
-    logger.info("Training/evaluation parameters %s", training_args)
+    # set seed & init logger
+    set_loggers(training_args)
 
     # Detecting last checkpoint.
     last_checkpoint = None
@@ -204,22 +183,16 @@ def main(args_file=None):
                 "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
             )
 
-    # Set seed
-    set_seed(training_args.seed)
-
-    # Set project name
-    os.environ["WANDB_PROJECT"] = "question-generation"
-
     # Load pretrained model and tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         use_fast=model_args.use_fast_tokenizer,
         revision=model_args.model_revision,
+        model_max_length=512,
         # use_auth_token=True if model_args.use_auth_token else None,
     )
 
-    tokenizer.add_tokens(['<hl>', '<sep>'])
     train_dataset, valid_dataset = read_data(data_args, tokenizer)
 
     if data_args.is_debug_mode == 1:
@@ -240,8 +213,6 @@ def main(args_file=None):
             cache_dir=model_args.cache_dir,
         )
 
-    model.resize_token_embeddings(len(tokenizer))
-
     # Data collator
     label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
     data_collator = DataCollatorForSeq2Seq(
@@ -250,10 +221,10 @@ def main(args_file=None):
         label_pad_token_id=label_pad_token_id
     )
 
-    # metric1 = load_metric("rouge")
     metric_squad = load_metric("squad")
     metric_bleu = load_metric("bleu")
-    rouge_metric = load_metric("rouge")
+    metric_rouge = load_metric("rouge")
+    metric_meteor = load_metric('meteor')
 
     def postprocess_bleu(preds, labels):
         preds = [word_tokenize(pred) for pred in preds]
@@ -280,9 +251,12 @@ def main(args_file=None):
         decoded_preds_tmp, decoded_labels_tmp = postprocess_squad(decoded_preds, decoded_labels)
         result_f1_em = metric_squad.compute(predictions=decoded_preds_tmp, references=decoded_labels_tmp)
 
+        # Meteor evaluation
+        result_meteor = metric_meteor.compute(predictions=decoded_preds, references=decoded_labels)
+
         # Extract a few results from ROUGE
         decoded_preds, decoded_labels = postprocess_bleu(decoded_preds, decoded_labels)
-        result_rouge = rouge_metric.compute(predictions=decoded_preds, references=decoded_labels)
+        result_rouge = metric_rouge.compute(predictions=decoded_preds, references=decoded_labels)
         result_rouge = {key: value.mid.fmeasure * 100 for key, value in result_rouge.items()}
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result_rouge["gen_len"] = np.mean(prediction_lens)
@@ -296,7 +270,7 @@ def main(args_file=None):
         }
 
         super_dict = {}  # uses set to avoid duplicates
-        for d in [result_f1_em, result_rouge, result_bleu]:
+        for d in [result_f1_em, result_rouge, result_bleu, result_meteor]:
             for k, v in d.items():
                 super_dict[k] = v
 
@@ -311,12 +285,7 @@ def main(args_file=None):
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
-        # prediction_loss_only=True,
-        # label_smoothing=model_args.label_smoothing
     )
-
-    # disable wandb console logs
-    logging.getLogger('wandb.run_manager').setLevel(logging.WARNING)
 
     # Training
     if training_args.do_train:
@@ -395,6 +364,31 @@ def main(args_file=None):
                         writer.write('-' * 50 + '\n')
 
     return results
+
+
+def set_loggers(training_args):
+    # Setup logging
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
+        datefmt="%m/%d/%Y %H:%M:%S",
+        level=logging.INFO if training_args.local_rank in [-1, 0] else logging.WARN,
+    )
+    logger.warning(
+        "Process rank: %s, device: %s, n_gpu: %s, distributed training: %s, 16-bits training: %s",
+        training_args.local_rank,
+        training_args.device,
+        training_args.n_gpu,
+        bool(training_args.local_rank != -1),
+        training_args.fp16,
+    )
+    logger.info("Training/evaluation parameters %s", training_args)
+    # Set seed
+    set_seed(training_args.seed)
+    # Set project name
+    os.environ["WANDB_PROJECT"] = "qg-baselines"
+
+    # disable wandb console logs
+    logging.getLogger('wandb.run_manager').setLevel(logging.WARNING)
 
 
 if __name__ == "__main__":
