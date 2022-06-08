@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
 echo "=============Hello guys=============!"
 
 PROJECT_NAME=${project_name}
@@ -32,23 +33,24 @@ echo "=============preprocess=============!"
 
 echo "=============RUN QG=============!"
 
+bash run2.sh
 #python3 run_qg.py  || exit
-python3 run_qg.py \
-    --model_name_or_path ${model_name_or_path} \
-    --model_type ${model_type} \
-    --tokenizer_name_or_path ${tokenizer_name_or_path} \
-    --output_dir ${output_dir} \
-    --train_file_path ${train_file_path} \
-    --valid_file_path ${valid_file_path} \
-    --per_device_train_batch_size ${per_device_train_batch_size} \
-    --per_device_eval_batch_size ${per_device_eval_batch_size} \
-    --gradient_accumulation_steps ${gradient_accumulation_steps} \
-    --learning_rate ${learning_rate} \
-    --num_train_epochs ${num_train_epochs} \
-    --seed 42 \
-    --do_train \
-    --do_eval \
-    --logging_steps 100 \
+#python3 run_qg.py \
+#    --model_name_or_path ${model_name_or_path} \
+#    --model_type ${model_type} \
+#    --tokenizer_name_or_path ${tokenizer_name_or_path} \
+#    --output_dir ${output_dir} \
+#    --train_file_path ${train_file_path} \
+#    --valid_file_path ${valid_file_path} \
+#    --per_device_train_batch_size ${per_device_train_batch_size} \
+#    --per_device_eval_batch_size ${per_device_eval_batch_size} \
+#    --gradient_accumulation_steps ${gradient_accumulation_steps} \
+#    --learning_rate ${learning_rate} \
+#    --num_train_epochs ${num_train_epochs} \
+#    --seed 42 \
+#    --do_train \
+#    --do_eval \
+#    --logging_steps 100 \
 
 
 #echo "=============training=============!"
@@ -56,5 +58,5 @@ python3 run_qg.py \
 
 echo "Experiment finished..."
 echo "we go to sleep for 2days"
-sleep 2d # 1 days!
+sleep 1d # 1 days!
 echo "=============BB guys=============!"

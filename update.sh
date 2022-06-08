@@ -1,6 +1,6 @@
 PROJECT_NAME=question_generation
 
-SERVER=hadifar@n086-03.wall2.ilabt.iminds.be
+SERVER=hadifar@n086-02.wall2.ilabt.iminds.be
 
 LOCAL=~/PycharmProjects/$PROJECT_NAME
 
@@ -9,7 +9,7 @@ REMOTE_DIR=/groups/wall2-ilabt-iminds-be/cmsearch/users/amir/projects/$PROJECT_N
 #while inotifywait -r -e modify,create,delete,move $LOCAL; do
 #sudo rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
 
-#sudo rsync --delete --archive --verbose --compress --update --owner -e ssh $LOCAL/dataset_large/train.json  $SERVER:$REMOTE_DIR/dataset_large/
+#sudo rsync --delete --archive --verbose --compress --update --owner -e ssh $LOCAL/dataset_large/qg_train.json  $SERVER:$REMOTE_DIR/dataset_large/
 #sudo rsync --delete --archive --verbose --compress --update --owner -e ssh $LOCAL/dataset_large/test_brusselsairport.json  $SERVER:$REMOTE_DIR/dataset_large/
 #sudo rsync --delete --archive --verbose --compress --update -e ssh $LOCAL/eval_runs/Oct13_xlm_roberta-base-4epoch/  $SERVER:$REMOTE_DIR/eval_runs/Oct13_xlm_roberta-base-4epoch/
 
@@ -21,14 +21,22 @@ REMOTE_DIR=/groups/wall2-ilabt-iminds-be/cmsearch/users/amir/projects/$PROJECT_N
 #rsync --delete --archive --verbose --compress --exclude 'cache/' --exclude 'train_data_qg_highlight_qg_format_t5_full.pt' --exclude 'valid_data_qg_highlight_qg_format_t5_full.pt' --update -e ssh $LOCAL/data/  $SERVER:$REMOTE_DIR/data/
 
 #script.sh
-rsync --include './' --include '*.py' --exclude '*' --exclude 'venv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
-rsync --include './' --include '*.txt' --exclude '*' --exclude 'venv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
-rsync --include './' --include '*.sh' --exclude '*' --exclude 'venv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
-rsync --include './' --include '*.json' --exclude '*' --exclude 'venv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+rsync --include './' --include '*.py' --exclude '*' --exclude 'qgenv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+rsync --include './' --include '*.txt' --exclude '*' --exclude 'qgenv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+rsync --include './' --include '*.sh' --exclude '*' --exclude 'qgenv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
+rsync --include './' --include '*.json' --exclude '*' --exclude 'qgenv/' --exclude 'data/' --delete --archive --verbose --compress --update -e ssh $LOCAL/  $SERVER:$REMOTE_DIR/
 
-#sudo rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/dataset_cache_XLMTokenizer  $SERVER:$REMOTE_DIR/dataset_cache_XLMTokenizer
+rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/cc_openstax_cloze_gen/  $SERVER:$REMOTE_DIR/data/cc_openstax_cloze_gen/
 
-ssh hadifar@n086-03.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/script.sh
-ssh hadifar@n086-03.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/
-ssh hadifar@n086-03.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/data/
+#rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/train_data_qg_conv_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/train_data_qg_conv_highlight_qg_format_t5.pt
+#rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/valid_data_qg_conv_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/valid_data_qg_conv_highlight_qg_format_t5.pt
+#rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/train_data_qg_gen_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/train_data_qg_gen_highlight_qg_format_t5.pt
+#rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/valid_data_qg_gen_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/valid_data_qg_gen_highlight_qg_format_t5.pt
+#
+#rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/t5_qg_tokenizer/  $SERVER:$REMOTE_DIR/t5_qg_tokenizer/
+
+
+ssh hadifar@n086-02.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/script.sh
+ssh hadifar@n086-02.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/
+ssh hadifar@n086-02.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/data/
 #done

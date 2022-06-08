@@ -1,5 +1,9 @@
-transformers==4.1.1
+transformers
 sentencepiece
 torch==1.7.1
 nltk==3.5
 nlp==0.4.0
+datasets
+scikit-learn
+rouge_score
+sacrebleu

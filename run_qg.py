@@ -98,10 +98,11 @@ class CTrainingArguments(TrainingArguments):
     #     default=0.1,
     #     metadata={"help": "similarity smoothing factor for rescaling loss"},
     # )
-    is_debug_mode: Optional[bool] = field(
-        default=False,
+    is_debug_mode: Optional[int] = field(
+        default=-1,
         metadata={"help": "training on local machine?"},
     )
+
 
 
 def main(args_file=None):
@@ -164,7 +165,7 @@ def main(args_file=None):
         cache_dir=model_args.cache_dir,
     )
 
-    if training_args.is_debug_mode:
+    if training_args.is_debug_mode==1:
         config = AutoConfig.from_pretrained('t5-small')
         config.d_ff = 64
         config.d_kv = 2

@@ -17,10 +17,9 @@
 
 from pipelines import pipeline
 
-nlp = pipeline('e2e-qg-v2',model='t5-small-e2e-qg-v2-hl-plus-rules', tokenizer='t5_qg_tokenizer')
+nlp = pipeline('e2e-qg-openstax', model='runs/openstax_qg_simple', tokenizer='runs/openstax_qg_simple')
 
 while True:
     text = input("Enter your text:")
     reply_dic = nlp(text)
-    print('Question:',reply_dic[0])
-    print('Answer:',reply_dic[1])
+    print('Question:', reply_dic)

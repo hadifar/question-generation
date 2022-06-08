@@ -77,3 +77,13 @@ def label_similarity_smoothed_nll_loss(lprobs, target, sim_epsilon, ignore_index
     eps_i = sim_epsilon / lprobs.size(-1)
     loss = (1.0 - sim_epsilon) * nll_loss + eps_i * smooth_loss
     return loss / bs, nll_loss / bs
+
+def compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions
+
+    return {
+        'accuracy': 0.0,
+    }
+
+
