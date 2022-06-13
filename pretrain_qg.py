@@ -60,10 +60,16 @@ class DataTrainingArguments:
         metadata={"help": "Path for data files"},
     )
     task: Optional[str] = field(
-        default='qg',
+        default='cloze2normal',
         metadata={
             "help": "cloze2normal, normal2cloze, multi, qg"},
     )
+
+    answer_aware: Optional[int] = field(
+        default=0,
+        metadata={"help": 'include answer during training?'},
+    )
+
     qg_format: Optional[str] = field(
         default='highlight_qg_format',
         metadata={"help": "How to format inputs for que generation, 'highlight_qg_format' or 'prepend_qg_format'"},

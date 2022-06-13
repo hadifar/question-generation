@@ -7,3 +7,4 @@ datasets==2.2.2
 scikit-learn==0.24.2
 rouge_score==0.0.4
 sacrebleu==2.1.0
+wandb

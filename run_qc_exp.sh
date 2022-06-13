@@ -23,7 +23,9 @@ for TASK_NAME in 'cloze2normal' 'normal2cloze' 'multi_cloze2normal' 'multi_norma
     --do_eval \
     --do_predict \
     --logging_steps 10 \
+    --answer_aware 1 \
     --evaluation_strategy "epoch" \
+    --save_strategy "no" \
     --overwrite_output_dir \
     --predict_with_generate \
     --is_debug_mode -1 || exit
