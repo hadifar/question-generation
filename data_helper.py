@@ -22,18 +22,18 @@ def tokenized_data(source_text, target_text, data_args, tokenizer):
 
 
 def process_normal2cloze(data, data_args, tokenizer):
-    all_questions = [item['question'] for item in list(chain(*[d['questions'] for d in data]))]
+    all_questions = [item for item in list(chain(*[d['questions'] for d in data]))]
     source_text = []
     target_text = []
     for q in all_questions:
         # add prompt & eos token
         if data_args.answer_aware == 1:
             ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
-            inp_txt = 'answer: {} normal2cloze: {}'.format(ans_txt, q['normal_format'])
+            inp_txt = 'answer: {} normal2cloze: {}'.format(ans_txt, q['question']['normal_format'])
         else:
-            inp_txt = 'normal2cloze: ' + q['normal_format']
+            inp_txt = 'normal2cloze: ' + q['question']['normal_format']
 
-        out_txt = q['cloze_format']
+        out_txt = q['question']['cloze_format']
         source_text.append(inp_txt)
         target_text.append(out_txt)
 
@@ -42,18 +42,18 @@ def process_normal2cloze(data, data_args, tokenizer):
 
 
 def process_cloze2normal(data, data_args, tokenizer):
-    all_questions = [item['question'] for item in list(chain(*[d['questions'] for d in data]))]
+    all_questions = [item for item in list(chain(*[d['questions'] for d in data]))]
     source_text = []
     target_text = []
     for q in all_questions:
         # add prompt
         if data_args.answer_aware == 1:
             ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
-            inp_txt = 'answer: {} cloze2normal: {}'.format(ans_txt, q['cloze_format'])
+            inp_txt = 'answer: {} cloze2normal: {}'.format(ans_txt, q['question']['cloze_format'])
         else:
-            inp_txt = 'cloze2normal: ' + q['cloze_format']
+            inp_txt = 'cloze2normal: ' + q['question']['cloze_format']
 
-        out_txt = q['normal_format']
+        out_txt = q['question']['normal_format']
 
         source_text.append(inp_txt)
         target_text.append(out_txt)
@@ -63,7 +63,7 @@ def process_cloze2normal(data, data_args, tokenizer):
 
 
 def process_multi(data, data_args, tokenizer, split):
-    all_questions = [item['question'] for item in list(chain(*[d['questions'] for d in data]))]
+    all_questions = [item for item in list(chain(*[d['questions'] for d in data]))]
     source_text = []
     target_text = []
     for q in all_questions:
@@ -71,41 +71,41 @@ def process_multi(data, data_args, tokenizer, split):
         if split == 'train':
             if data_args.answer_aware == 1:
                 ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
-                inp_txt = 'answer: {} cloze2normal: {}'.format(ans_txt, q['cloze_format'])
+                inp_txt = 'answer: {} cloze2normal: {}'.format(ans_txt, q['question']['cloze_format'])
             else:
-                inp_txt = 'cloze2normal: ' + q['cloze_format']
+                inp_txt = 'cloze2normal: ' + q['question']['cloze_format']
 
-            out_txt = q['normal_format']
+            out_txt = q['question']['normal_format']
             source_text.append(inp_txt)
             target_text.append(out_txt)
 
             if data_args.answer_aware == 1:
                 ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
-                inp_txt = 'answer: {} normal2cloze: {}'.format(ans_txt, q['normal_format'])
+                inp_txt = 'answer: {} normal2cloze: {}'.format(ans_txt, q['question']['normal_format'])
             else:
-                inp_txt = 'normal2cloze: ' + q['normal_format']
+                inp_txt = 'normal2cloze: ' + q['question']['normal_format']
 
-            out_txt = q['cloze_format']
+            out_txt = q['question']['cloze_format']
             source_text.append(inp_txt)
             target_text.append(out_txt)
         else:
             if data_args.task == 'multi_cloze2normal':
                 if data_args.answer_aware == 1:
                     ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
-                    inp_txt = 'answer: {} cloze2normal: {}'.format(ans_txt, q['cloze_format'])
+                    inp_txt = 'answer: {} cloze2normal: {}'.format(ans_txt, q['question']['cloze_format'])
                 else:
-                    inp_txt = 'cloze2normal: ' + q['cloze_format']
+                    inp_txt = 'cloze2normal: ' + q['question']['cloze_format']
 
-                out_txt = q['normal_format']
+                out_txt = q['question']['normal_format']
                 source_text.append(inp_txt)
                 target_text.append(out_txt)
             elif data_args.task == 'multi_normal2cloze':
                 if data_args.answer_aware == 1:
                     ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
-                    inp_txt = 'answer: {} normal2cloze: {}'.format(ans_txt, q['normal_format'])
+                    inp_txt = 'answer: {} normal2cloze: {}'.format(ans_txt, q['question']['normal_format'])
                 else:
-                    inp_txt = 'normal2cloze: ' + q['normal_format']
-                out_txt = q['cloze_format']
+                    inp_txt = 'normal2cloze: ' + q['question']['normal_format']
+                out_txt = q['question']['cloze_format']
 
                 source_text.append(inp_txt)
                 target_text.append(out_txt)
