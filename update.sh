@@ -28,7 +28,10 @@ rsync --include './' --include '*.json' --exclude '*' --exclude 'qgenv/' --exclu
 
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/cc_openstax_cloze_gen/  $SERVER:$REMOTE_DIR/data/cc_openstax_cloze_gen/
 
-rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/*  $SERVER:$REMOTE_DIR/raw_data/*
+rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/dev-v2.0.json  $SERVER:$REMOTE_DIR/raw_data/dev-v2.0.json
+rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/qg_train.json  $SERVER:$REMOTE_DIR/raw_data/qg_train.json
+rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/qg_valid.json  $SERVER:$REMOTE_DIR/raw_data/qg_valid.json
+
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/valid_data_qg_conv_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/valid_data_qg_conv_highlight_qg_format_t5.pt
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/train_data_qg_gen_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/train_data_qg_gen_highlight_qg_format_t5.pt
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/valid_data_qg_gen_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/valid_data_qg_gen_highlight_qg_format_t5.pt
