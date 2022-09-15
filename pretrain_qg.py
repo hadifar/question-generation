@@ -60,9 +60,9 @@ class DataTrainingArguments:
         metadata={"help": "Path for data files"},
     )
     task: Optional[str] = field(
-        default='cloze2normal',
+        default='qg_agno',
         metadata={
-            "help": "cloze2normal, normal2cloze, multi, qg"},
+            "help": "cloze2normal, normal2cloze, multi, qg, qg_agno"},
     )
 
     answer_aware: Optional[int] = field(
@@ -271,7 +271,7 @@ def main(args_file=None):
         # Extract bleu
         result_bleu = metric_bleu.compute(predictions=decoded_preds, references=decoded_labels)
         result_bleu = {
-            'bleu': result_bleu['bleu'],
+            'bleu': result_bleu['bleu'] * 100,
             # 'bleu_precisions': result_bleu['precisions']
         }
 
