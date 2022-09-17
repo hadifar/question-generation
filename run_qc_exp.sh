@@ -17,13 +17,12 @@ for TASK_NAME in 'cloze2normal' 'normal2cloze' 'multi_cloze2normal' 'multi_norma
     --per_device_eval_batch_size 32 \
     --gradient_accumulation_steps 1 \
     --learning_rate 6.25e-5 \
-    --num_train_epochs 1 \
+    --num_train_epochs 10 \
     --seed 42 \
     --do_train \
     --do_eval \
     --do_predict \
     --logging_steps 10 \
-    --answer_aware 1 \
     --evaluation_strategy "epoch" \
     --save_strategy "no" \
     --overwrite_output_dir \

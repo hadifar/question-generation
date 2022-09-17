@@ -1,6 +1,6 @@
 PROJECT_NAME=question_generation
 
-SERVER=hadifar@n087-07.wall2.ilabt.iminds.be
+SERVER=hadifar@n087-09.wall2.ilabt.iminds.be
 
 LOCAL=~/PycharmProjects/$PROJECT_NAME
 
@@ -31,6 +31,7 @@ rsync --include './' --include '*.json' --exclude '*' --exclude 'qgenv/' --exclu
 rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/dev-v2.0.json  $SERVER:$REMOTE_DIR/raw_data/dev-v2.0.json
 rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/qg_train.json  $SERVER:$REMOTE_DIR/raw_data/qg_train.json
 rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/qg_valid.json  $SERVER:$REMOTE_DIR/raw_data/qg_valid.json
+rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw_data/qg_dutch.json  $SERVER:$REMOTE_DIR/raw_data/dutch_qg.json
 
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/valid_data_qg_conv_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/valid_data_qg_conv_highlight_qg_format_t5.pt
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/data/train_data_qg_gen_highlight_qg_format_t5.pt  $SERVER:$REMOTE_DIR/data/train_data_qg_gen_highlight_qg_format_t5.pt
@@ -39,7 +40,7 @@ rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/raw
 #rsync --delete --archive --verbose --compress --owner --update -e ssh $LOCAL/t5_qg_tokenizer/  $SERVER:$REMOTE_DIR/t5_qg_tokenizer/
 
 
-ssh hadifar@n087-07.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/script.sh
-ssh hadifar@n087-07.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/
-ssh hadifar@n087-07.wall2.ilabt.iminds.be sudo chmod -R 777 $REMOTE_DIR/data/
+ssh $SERVER sudo chmod -R 777 $REMOTE_DIR/script.sh
+ssh $SERVER sudo chmod -R 777 $REMOTE_DIR/
+ssh $SERVER sudo chmod -R 777 $REMOTE_DIR/raw_data/
 #done

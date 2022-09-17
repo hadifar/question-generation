@@ -1,19 +1,20 @@
-TASK_NAME='qg_agno'
-MODEL_NAME='mrm8488/t5-base-finetuned-question-generation-ap'
+TASK_NAME='qg_dutch'
+MODEL_NAME='flax-community/t5-base-dutch'
 EX_TIME=$(date +"%Y-%h-%d-(%H:%M)")
 
 echo "=============RUN EXP=============!"
-echo 'train->squad -*- eval->openqg'
+echo 'train->dutch -*- eval->dutch'
 echo $TASK_NAME
 echo $EX_TIME
 echo "=============RUN EXP=============!"
 python3 pretrain_qg.py \
   --task $TASK_NAME \
   --model_name_or_path $MODEL_NAME \
-  --logging_dir "runs/${TASK_NAME}_mrm8488_${EX_TIME}/logs" \
-  --output_dir "runs/${TASK_NAME}_mrm8488_${EX_TIME}" \
-  --train_file_path "raw_data/qg_train.json" \
-  --valid_file_path "raw_data/qg_valid.json" \
+  --logging_dir "runs/${TASK_NAME}_dutch_t5_${EX_TIME}/logs" \
+  --output_dir "runs/${TASK_NAME}_dutch_t5_${EX_TIME}" \
+  --cache_dir "runs/cache/" \
+  --train_file_path "raw_data/qg_dutch.json" \
+  --valid_file_path "raw_data/qg_dutch.json" \
   --per_device_train_batch_size 8 \
   --per_device_eval_batch_size 8 \
   --gradient_accumulation_steps 4 \

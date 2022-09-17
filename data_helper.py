@@ -142,6 +142,21 @@ def process_qg_agno_openstax(data, data_args, tokenizer):
     return CustomDS(model_inputs.data)
 
 
+def process_dutch_qg(data, data_args, tokenizer):
+    source_text = []
+    target_text = []
+    for qa_pair in data:
+        context = qa_pair['context_answer']
+        answer = qa_pair['answer']
+        question = qa_pair['question_text']
+        inp_txt = 'answer: {} context: {}'.format(answer, context)
+
+        source_text.append(inp_txt)
+        target_text.append(question)
+
+    model_inputs = tokenized_data(source_text, target_text, data_args, tokenizer)
+    return CustomDS(model_inputs.data)
+
 def process_qg_squad(data, data_args, tokenizer):
     source_text = []
     target_text = []
@@ -201,6 +216,8 @@ def process_data(data, data_args, tknizer, split):
         return process_qg_openstax(data, data_args, tknizer)
     elif data_args.task == 'qg_agno':
         return process_qg_agno_openstax(data, data_args, tknizer)
+    elif data_args.task == 'dutch_qg':
+        return process_dutch_qg(data, data_args, tknizer)
     else:
         raise Exception('fu')
 
@@ -220,6 +237,15 @@ def read_data(data_args, tokenizer):
             valid_data = valid_data[:3]
         train_ds = process_data(train_data, data_args, tokenizer, 'train')
         valid_ds = process_qg_squad(valid_data, data_args, tokenizer)
+    elif data_args.valid_file_path.endswith('qg_dutch.json'):
+        train_data = read_json_file(data_args.train_file_path)['train']
+        valid_data = read_json_file(data_args.valid_file_path)['test']
+        if data_args.is_debug_mode == 1:
+            train_data = train_data[:3]
+            valid_data = valid_data[:3]
+        train_ds = process_dutch_qg(train_data, data_args, tokenizer)
+        valid_ds = process_dutch_qg(valid_data, data_args, tokenizer)
+
     else:
         train_data = read_json_file(data_args.train_file_path)
         valid_data = read_json_file(data_args.valid_file_path)
