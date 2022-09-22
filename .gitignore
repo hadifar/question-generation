@@ -2,12 +2,7 @@ data/*
 
 wandb
 /runs
-/data/cc_debug
-/data/cc_qg/org_train_qa_pairs.txt
-/data/cc_qg/cache
-data/cc_qg/train_qa_pairs.txt
-data/cc_qg/valid_qa_pairs.txt
-data/cc_qg/cc_qg.py.lock
+/raw_data
 t5_qg_tokenizer
 /qgenv
 .idea/

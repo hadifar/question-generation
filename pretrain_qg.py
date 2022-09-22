@@ -16,6 +16,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from data_helper import read_data
 
 logger = logging.getLogger(__name__)
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 @dataclass

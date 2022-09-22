@@ -157,6 +157,7 @@ def process_dutch_qg(data, data_args, tokenizer):
     model_inputs = tokenized_data(source_text, target_text, data_args, tokenizer)
     return CustomDS(model_inputs.data)
 
+
 def process_qg_squad(data, data_args, tokenizer):
     source_text = []
     target_text = []
@@ -202,6 +203,19 @@ def process_qg_squad(data, data_args, tokenizer):
     model_inputs = tokenized_data(source_text, target_text, data_args, tokenizer)
     return CustomDS(model_inputs.data)
 
+def process_qg_agno_tqa(data, data_args, tokenizer):
+    source_text = []
+    target_text = []
+
+    for chapter in data:
+        for q in chapter['questions']:
+            inp_txt = 'context: {}'.format(q['ground_sentence'])
+            out_txt = q['question_text']
+            source_text.append(inp_txt)
+            target_text.append(out_txt)
+
+    model_inputs = tokenized_data(source_text, target_text, data_args, tokenizer)
+    return CustomDS(model_inputs.data)
 
 def process_data(data, data_args, tknizer, split):
     if data_args.task == 'cloze2normal':
@@ -216,10 +230,12 @@ def process_data(data, data_args, tknizer, split):
         return process_qg_openstax(data, data_args, tknizer)
     elif data_args.task == 'qg_agno':
         return process_qg_agno_openstax(data, data_args, tknizer)
+    elif data_args.task == 'qg_tqa':
+        return process_qg_agno_tqa(data, data_args, tknizer)
     elif data_args.task == 'dutch_qg':
         return process_dutch_qg(data, data_args, tknizer)
     else:
-        raise Exception('fu')
+        raise Exception('task not found...')
 
 
 def read_json_file(file_path):
@@ -228,31 +244,41 @@ def read_json_file(file_path):
     return data
 
 
+def subsample_for_debug(data_args, train_data, valid_data):
+    if data_args.is_debug_mode == 1:
+        train_data = train_data[:3]
+        valid_data = valid_data[:3]
+    return train_data, valid_data
+
+
 def read_data(data_args, tokenizer):
+    # squad
     if data_args.valid_file_path.endswith('dev-v2.0.json'):
         train_data = read_json_file(data_args.train_file_path)
         valid_data = read_json_file(data_args.valid_file_path)['data']
-        if data_args.is_debug_mode == 1:
-            train_data = train_data[:3]
-            valid_data = valid_data[:3]
+        train_data, valid_data = subsample_for_debug(data_args, train_data, valid_data)
         train_ds = process_data(train_data, data_args, tokenizer, 'train')
         valid_ds = process_qg_squad(valid_data, data_args, tokenizer)
+    # dutch version of qg
     elif data_args.valid_file_path.endswith('qg_dutch.json'):
         train_data = read_json_file(data_args.train_file_path)['train']
         valid_data = read_json_file(data_args.valid_file_path)['test']
-        if data_args.is_debug_mode == 1:
-            train_data = train_data[:3]
-            valid_data = valid_data[:3]
+        train_data, valid_data = subsample_for_debug(data_args, train_data, valid_data)
         train_ds = process_dutch_qg(train_data, data_args, tokenizer)
         valid_ds = process_dutch_qg(valid_data, data_args, tokenizer)
+    elif data_args.valid_file_path.find('mTQA') != -1:
+        train_data = read_json_file(data_args.train_file_path)
+        valid_data = read_json_file(data_args.valid_file_path)
+        train_data, valid_data = subsample_for_debug(data_args, train_data, valid_data)
+
+        train_ds = process_data(train_data, data_args, tokenizer, 'train')
+        valid_ds = process_data(valid_data, data_args, tokenizer, 'valid')
 
     else:
         train_data = read_json_file(data_args.train_file_path)
         valid_data = read_json_file(data_args.valid_file_path)
 
-        if data_args.is_debug_mode == 1:
-            train_data = train_data[:3]
-            valid_data = valid_data[:3]
+        train_data, valid_data = subsample_for_debug(data_args, train_data, valid_data)
 
         train_ds = process_data(train_data, data_args, tokenizer, 'train')
         valid_ds = process_data(valid_data, data_args, tokenizer, 'valid')
