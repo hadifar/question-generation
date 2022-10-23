@@ -2,7 +2,13 @@ data/*
 
 wandb
 /runs
-/raw_data
+/raw_data/*.py
+/raw_data/*.txt
+/raw_data/mTQA*
+/raw_data/qg_dutch.json
+/raw_data/qg_train.json
+/raw_data/dev-v2.0.json
+
 t5_qg_tokenizer
 /qgenv
 .idea/
@@ -10,3 +16,4 @@ t5_qg_tokenizer
 *.lock
 *.pt
 __pycache__
+update.sh
