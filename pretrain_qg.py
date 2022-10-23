@@ -41,7 +41,7 @@ class ModelArguments:
         metadata={"help": "The specific model version to use (can be a branch name, tag name or commit id)."},
     )
     cache_dir: Optional[str] = field(
-        default=None, metadata={"help": "Where do you want to store the pretrained models downloaded from s3"}
+        default='cache/', metadata={"help": "Where do you want to store the pretrained models downloaded from s3"}
     )
 
 

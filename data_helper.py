@@ -132,8 +132,7 @@ def process_qg_agno_openstax(data, data_args, tokenizer):
         # add prompt & eos token
         # ans_txt = q['question']['question_choices'][q['answer']['ans_choice']]
         # context = q['hl_sentences']
-        context = q['hl_context'].replace('<hl>', '')
-        inp_txt = 'context: {}'.format(context)
+        inp_txt = 'context {}: '.format(q['hl_context'].replace('<hl>', ''))
         out_txt = q['question']['normal_format']
         source_text.append(inp_txt)
         target_text.append(out_txt)
@@ -209,7 +208,7 @@ def process_qg_agno_tqa(data, data_args, tokenizer):
 
     for chapter in data:
         for q in chapter['questions']:
-            inp_txt = 'context: {}'.format(q['ground_sentence'])
+            inp_txt = "context: {}".format(q['ground_sentence'])
             out_txt = q['question_text']
             source_text.append(inp_txt)
             target_text.append(out_txt)

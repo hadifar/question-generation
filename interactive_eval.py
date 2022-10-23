@@ -17,7 +17,7 @@
 
 from pipelines import pipeline
 
-nlp = pipeline('e2e-qg-openstax', model='runs/openstax_qg_simple', tokenizer='runs/openstax_qg_simple')
+nlp = pipeline('e2e-qg-openstax', model='hadifar/openstax_qg_agno', tokenizer='hadifar/openstax_qg_agno')
 
 while True:
     text = input("Enter your text:")
