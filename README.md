@@ -16,7 +16,7 @@ Eprint = {arXiv:2210.06104},
 }
 ```
 
-The structure of json files is as follows:
+The structure of dataset files (`raw_data/qg_train_v0.json` and `raw_data/qg_valid_v0.json`) is shown in the following figure. Each file is a list of chapters with various attributes such as: `intro`, `chapter_text`, `bname`, etc. 
 
 ![alt text](https://raw.githubusercontent.com/hadifar/question-generation/main/resources/json_schema.png)
 
