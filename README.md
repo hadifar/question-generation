@@ -16,6 +16,9 @@ Eprint = {arXiv:2210.06104},
 }
 ```
 
+The structure of json files is as follows:
+
+![alt text](https://raw.githubusercontent.com/hadifar/question-generation/main/resources/json_schema.png)
 
 ### Pre-requisites ###
 
