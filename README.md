@@ -25,7 +25,7 @@ The structure of dataset files (`raw_data/qg_train_v0.json` and `raw_data/qg_val
 > pip install -r requirements.txt 
 
 
-#### Train from QG from scratch ###
+#### Train QG from scratch ###
 
 <pre> sh run_qg_exp.sh
 </pre>
